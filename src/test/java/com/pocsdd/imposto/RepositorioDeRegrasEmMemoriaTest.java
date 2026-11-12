@@ -33,6 +33,20 @@ class RepositorioDeRegrasEmMemoriaTest {
     }
 
     @Test
+    void regrasDeProdutoEDeCategoriaDeMesmoCodigoFicamSeparadas() {
+        RegraDeAliquota doProduto = regra("A", "2028-01-01");
+        RegraDeAliquota daCategoria = new RegraDeAliquota(Alvo.categoria("A"), BigDecimal.TEN,
+                LocalDate.parse("2028-01-01"), null, null);
+
+        repositorio.adicionar(doProduto);
+        repositorio.adicionar(daCategoria);
+
+        assertThat(repositorio.buscarPorAlvo(Alvo.produto("A"))).containsExactly(doProduto);
+        assertThat(repositorio.buscarPorProduto("A")).containsExactly(doProduto);
+        assertThat(repositorio.buscarPorAlvo(Alvo.categoria("A"))).containsExactly(daCategoria);
+    }
+
+    @Test
     void substituirTrocaApenasARegraIndicada() {
         RegraDeAliquota primeira = new RegraDeAliquota("P1", BigDecimal.TEN, LocalDate.parse("2026-01-01"),
                 LocalDate.parse("2026-06-30"));

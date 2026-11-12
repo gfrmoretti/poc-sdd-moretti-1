@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Proof-of-concept for spec-driven development (SDD) using [OpenSpec](https://github.com/Fission-AI/OpenSpec) (CLI v2.0.0, installed globally via npm). The application is a Java 25 / Maven library (`com.pocsdd`). The domain lives in `com.pocsdd.imposto`: per-product tax rates with validity periods and tax calculation, exposed through `ServicoDeImposto` over a `RepositorioDeRegras` port (in-memory implementation only). Domain code, specs and tests use Portuguese names; `App` is a leftover placeholder.
+Proof-of-concept for spec-driven development (SDD) using [OpenSpec](https://github.com/Fission-AI/OpenSpec) (CLI v2.0.0, installed globally via npm). The application is a Java 25 / Maven library (`com.pocsdd`). The domain lives in `com.pocsdd.imposto`: tax-rate rules with validity periods targeting a product or a product category (`Alvo`), each with an optional cap (`teto`), and tax calculation where a product's own rule takes precedence over its category's. Exposed through `ServicoDeImposto` over the `RepositorioDeRegras` and `RepositorioDeCategorias` ports (in-memory implementations only). Domain code, specs and tests use Portuguese names; `App` is a leftover placeholder.
 
 ## Rules (mandatory)
 

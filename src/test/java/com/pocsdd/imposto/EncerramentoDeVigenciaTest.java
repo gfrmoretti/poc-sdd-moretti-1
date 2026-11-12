@@ -65,6 +65,27 @@ class EncerramentoDeVigenciaTest {
     }
 
     @Test
+    @DisplayName("Produto sem regras: mensagem identifica o produto")
+    void produtoSemRegrasMensagemIdentificaOProduto() {
+        ImpostoException erro = falhaCom(Motivo.SEM_REGRA_EM_ABERTO,
+                () -> servico.encerrarVigencia("P9", data("2026-12-31")));
+
+        assertThat(erro).hasMessageContaining("o produto P9");
+    }
+
+    @Test
+    @DisplayName("Produto em branco ao encerrar")
+    void produtoEmBrancoAoEncerrar() {
+        falhaCom(Motivo.PRODUTO_INVALIDO, () -> servico.encerrarVigencia(" ", data("2026-12-31")));
+    }
+
+    @Test
+    @DisplayName("Produto ausente ao encerrar")
+    void produtoAusenteAoEncerrar() {
+        falhaCom(Motivo.PRODUTO_INVALIDO, () -> servico.encerrarVigencia(null, data("2026-12-31")));
+    }
+
+    @Test
     @DisplayName("Data de fim anterior ao início da regra")
     void dataDeFimAnteriorAoInicioDaRegra() {
         RegraDeAliquota aberta = servico.cadastrarRegra("P1", new BigDecimal("10"), data("2026-07-01"), null);

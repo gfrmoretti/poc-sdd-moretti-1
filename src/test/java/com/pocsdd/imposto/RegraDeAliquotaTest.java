@@ -78,4 +78,35 @@ class RegraDeAliquotaTest {
         assertThat(encerrada.vigenteDe()).isEqualTo(aberta.vigenteDe());
         assertThat(aberta.emAberto()).isTrue();
     }
+
+    @Test
+    void produtoECategoriaDeMesmoCodigoNaoSeSobrepoem() {
+        RegraDeAliquota doProduto = new RegraDeAliquota(Alvo.produto("A"), BigDecimal.TEN,
+                LocalDate.parse("2028-01-01"), null, null);
+        RegraDeAliquota daCategoria = new RegraDeAliquota(Alvo.categoria("A"), BigDecimal.TEN,
+                LocalDate.parse("2028-01-01"), null, null);
+
+        assertThat(doProduto.sobrepoe(daCategoria)).isFalse();
+        assertThat(daCategoria.sobrepoe(doProduto)).isFalse();
+    }
+
+    @Test
+    void construtorDeProdutoCriaRegraDeProdutoSemTeto() {
+        RegraDeAliquota regra = regra("P1", "2026-01-01", null);
+
+        assertThat(regra.alvo()).isEqualTo(Alvo.produto("P1"));
+        assertThat(regra.teto()).isNull();
+    }
+
+    @Test
+    void encerradaEmMantemAlvoETeto() {
+        RegraDeAliquota aberta = new RegraDeAliquota(Alvo.categoria("A"), new BigDecimal("14"),
+                LocalDate.parse("2028-01-01"), null, new BigDecimal("1000.00"));
+
+        RegraDeAliquota encerrada = aberta.encerradaEm(LocalDate.parse("2028-12-31"));
+
+        assertThat(encerrada.alvo()).isEqualTo(Alvo.categoria("A"));
+        assertThat(encerrada.teto()).isEqualByComparingTo("1000.00");
+        assertThat(encerrada.vigenteAte()).isEqualTo(LocalDate.parse("2028-12-31"));
+    }
 }

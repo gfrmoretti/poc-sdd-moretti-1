@@ -7,7 +7,9 @@ public final class ImpostoException extends RuntimeException {
 
     public enum Motivo {
         PRODUTO_INVALIDO,
+        CATEGORIA_INVALIDA,
         ALIQUOTA_INVALIDA,
+        TETO_INVALIDO,
         PERIODO_INVALIDO,
         SOBREPOSICAO_DE_VIGENCIA,
         SEM_REGRA_EM_ABERTO,

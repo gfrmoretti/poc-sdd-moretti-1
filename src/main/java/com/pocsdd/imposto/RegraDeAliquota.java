@@ -4,10 +4,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Alíquota (em percentual) de um produto vigente no intervalo fechado [vigenteDe, vigenteAte].
- * {@code vigenteAte == null} significa vigência em aberto.
+ * Alíquota (em percentual) de um produto ou categoria vigente no intervalo fechado [vigenteDe, vigenteAte].
+ * {@code vigenteAte == null} significa vigência em aberto; {@code teto == null} significa imposto sem limite.
  */
-public record RegraDeAliquota(String produto, BigDecimal aliquota, LocalDate vigenteDe, LocalDate vigenteAte) {
+public record RegraDeAliquota(Alvo alvo, BigDecimal aliquota, LocalDate vigenteDe, LocalDate vigenteAte,
+        BigDecimal teto) {
+
+    /** Regra de produto sem teto. */
+    public RegraDeAliquota(String produto, BigDecimal aliquota, LocalDate vigenteDe, LocalDate vigenteAte) {
+        this(Alvo.produto(produto), aliquota, vigenteDe, vigenteAte, null);
+    }
 
     public boolean emAberto() {
         return vigenteAte == null;
@@ -18,13 +24,13 @@ public record RegraDeAliquota(String produto, BigDecimal aliquota, LocalDate vig
     }
 
     public boolean sobrepoe(RegraDeAliquota outra) {
-        return produto.equals(outra.produto)
+        return alvo.equals(outra.alvo)
                 && !vigenteDe.isAfter(outra.fimEfetivo())
                 && !outra.vigenteDe.isAfter(fimEfetivo());
     }
 
     public RegraDeAliquota encerradaEm(LocalDate dataFim) {
-        return new RegraDeAliquota(produto, aliquota, vigenteDe, dataFim);
+        return new RegraDeAliquota(alvo, aliquota, vigenteDe, dataFim, teto);
     }
 
     private LocalDate fimEfetivo() {
