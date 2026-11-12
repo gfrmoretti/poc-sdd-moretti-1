@@ -9,7 +9,11 @@ Proof-of-concept for spec-driven development (SDD) using [OpenSpec](https://gith
 ## Rules (mandatory)
 
 - **Read the OpenSpec before implementing.** Before writing or changing code, read the relevant change in `openspec/changes/<name>/` (`proposal.md`, `design.md`, `tasks.md`, delta `specs/`) and the affected main specs in `openspec/specs/`. Implement what the spec says; if the spec is missing, ambiguous, or wrong, stop and update/clarify the spec first (`openspec-update-change` / `openspec-explore`) instead of improvising.
-- **Never change tests to make them pass.** A failing test means the production code is wrong (or the spec changed). Do not weaken assertions, delete, `@Disabled`, skip (`-DskipTests`, `-DskipITs`), or rewrite expected values to match current behavior. A test may only be changed when the spec it encodes has changed — say so explicitly and point to the spec change.
+- **Never change tests to make them pass.** A failing test means the production code is wrong (or the spec changed). Never weaken assertions, delete, `@Disabled`, skip (`-DskipTests`, `-DskipITs`), or rewrite expected values to match current behavior. What is allowed depends on the kind of edit:
+  - **Adding tests** (new methods or files): always allowed.
+  - **Changing what a test asserts** (expected values, assertions, removing a scenario's test): only when the spec scenario it encodes changed in an OpenSpec change (`MODIFIED`/`REMOVED` delta) that the user reviewed. Update the spec first, then the test, in the same change, and name the scenario and change in the summary.
+  - **Mechanical edits from a refactor** (constructor/signature changes, how test data is built, imports, renames): allowed only if no assertion, expected value or covered scenario changes. Call these out explicitly. Prefer this over keeping production code just for test compatibility, unless the compatibility layer is trivial.
+  - Before finishing, review `git diff -- src/test`: every removed or changed line must fall under one of the cases above.
 - Do not suppress or relax lint rules (`config/checkstyle/checkstyle.xml`, `-Xlint:all -Werror`) to get a build green; fix the code.
 - `./mvnw verify` must pass before a task is considered done.
 
